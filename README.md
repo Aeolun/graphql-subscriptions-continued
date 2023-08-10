@@ -1,6 +1,14 @@
 [![npm version](https://badge.fury.io/js/graphql-subscriptions.svg)](https://badge.fury.io/js/graphql-subscriptions) [![GitHub license](https://img.shields.io/github/license/apollostack/graphql-subscriptions.svg)](https://github.com/apollographql/graphql-subscriptions/blob/master/LICENSE)
 
-# graphql-subscriptions
+# graphql-subscriptions-continued
+
+GraphQL subscriptions continued is a copy of the original [graphql-subscriptions](https://github.com/apollographql/graphql-subscriptions) which seems to be (near) abandoned.
+
+Since I was tired of waiting for the v3 release to be made, I've made it myself now. It should work identical to the original version, but with the version as of the release-3.0 branch. This hopefully means it'll be compatible with graphql-code-generator again.
+
+There's alternatives to this library, but people with existing code probably want to migrate with as little fuzz as possible, so this retains the exact same interface.
+
+## graphql-subscriptions
 
 GraphQL subscriptions is a simple npm package that lets you wire up GraphQL with a pubsub system (like Redis) to implement subscriptions in GraphQL.
 
@@ -8,9 +16,9 @@ You can use it with any GraphQL client and server (not only Apollo).
 
 ### Installation
 
-`npm install graphql-subscriptions graphql` or `yarn add graphql-subscriptions graphql`
+`npm install graphql-subscriptions-continued graphql` or `yarn add graphql-subscriptions-continued graphql`
 
-> This package should be used with a network transport, for example [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws).
+> This package should be used with a network transport, for example [graphql-ws](https://github.com/enisdenjo/graphql-ws).
 
 ### TypeScript
 
@@ -47,7 +55,7 @@ Now, let's create a simple `PubSub` instance - it is a simple pubsub implementat
 to the `PubSub` constructor.
 
 ```js
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from 'graphql-subscriptions-continued';
 
 export const pubsub = new PubSub();
 ```
@@ -110,7 +118,7 @@ To do so, we can use `withFilter` helper from this package, which wraps `AsyncIt
 For example, if `somethingChanged` would also accept a variable with the ID that is relevant, we can use the following code to filter according to it:
 
 ```js
-import { withFilter } from 'graphql-subscriptions';
+import { withFilter } from 'graphql-subscriptions-continued';
 
 const SOMETHING_CHANGED_TOPIC = 'something_changed';
 
@@ -207,8 +215,6 @@ You can use this value and wrap it with another `AsyncIterator` to implement cus
 For example, the following implementation manipulates the payload by adding some static fields:
 
 ```typescript
-import { $$asyncIterator } from 'iterall';
-
 export const withStaticFields = (asyncIterator: AsyncIterator<any>, staticFields: Object): Function => {
   return (rootValue: any, args: any, context: any, info: any): AsyncIterator<any> => {
 
@@ -230,7 +236,7 @@ export const withStaticFields = (asyncIterator: AsyncIterator<any>, staticFields
       throw(error) {
         return Promise.reject(error);
       },
-      [$$asyncIterator]() {
+      [Symbol.asyncIterator]() {
         return this;
       },
     };
@@ -239,11 +245,6 @@ export const withStaticFields = (asyncIterator: AsyncIterator<any>, staticFields
 ```
 
 > You can also take a look at `withFilter` for inspiration.
-
-For more information about `AsyncIterator`:
-- [TC39 Proposal](https://github.com/tc39/proposal-async-iteration)
-- [iterall](https://github.com/leebyron/iterall)
-- [IxJS](https://github.com/ReactiveX/IxJS)
 
 ### PubSub Implementations
 
@@ -265,9 +266,3 @@ It can be easily replaced with some other implementations of [PubSubEngine abstr
 - [Add your implementation...](https://github.com/apollographql/graphql-subscriptions/pull/new/master)
 
 You can also implement a `PubSub` of your own, by using the exported abstract class `PubSubEngine` from this package. By using `extends PubSubEngine` you use the default `asyncIterator` method implementation; by using `implements PubSubEngine` you must implement your own `AsyncIterator`.
-
-#### SubscriptionManager **@deprecated**
-
-`SubscriptionManager` is the previous alternative for using `graphql-js` subscriptions directly, and it's now deprecated.
-
-If you are looking for its API docs, refer to [a previous commit of the repository](https://github.com/apollographql/graphql-subscriptions/blob/5eaee92cd50060b3f3637f00c53960f51a07d0b2/README.md)
