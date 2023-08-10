@@ -1,7 +1,7 @@
 {
   "name": "graphql-subscriptions-continued",
   "version": "3.0.0",
-  "description": "GraphQL subscriptions for node.js, with  correct Typescript types",
+  "description": "GraphQL subscriptions for node.js, with  modern Typescript types",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -13,13 +13,13 @@
   },
   "scripts": {
     "clean": "rimraf dist coverage",
-    "compile": "tsc",
+    "build": "tsc",
     "pretest": "npm run compile",
     "test": "npm run testonly",
     "watch": "tsc -w",
     "testonly": "mocha -n expose-gc --reporter spec --full-trace ./dist/test/tests.js ./dist/test/asyncIteratorSubscription.js",
     "coverage": "nyc mocha --full-trace ./dist/test/tests.js ./dist/test/asyncIteratorSubscription.js",
-    "prepare": "npm run clean && npm run compile"
+    "prepare": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@types/chai-as-promised": "^7.1.4",
