@@ -211,7 +211,7 @@ describe('withFilter', () => {
     let stopped = false;
 
     let index = 0;
-    const asyncIterator: AsyncIterator<any> = {
+    const asyncIterator: AsyncIterableIterator<any> = {
       next() {
         if (stopped) {
           return Promise.resolve({done: true, value: undefined});
@@ -225,6 +225,9 @@ describe('withFilter', () => {
       },
       throw(error) {
         return Promise.reject(error);
+      },
+      [Symbol.asyncIterator]() {
+        return this;
       },
     };
 
