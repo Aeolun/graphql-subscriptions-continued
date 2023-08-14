@@ -7,4 +7,7 @@ export abstract class PubSubEngine {
   public asyncIterableIterator<T>(triggers: string | readonly string[]): PubSubAsyncIterableIterator<T> {
     return new PubSubAsyncIterableIterator<T>(this, triggers);
   }
+  public asyncIterator<T>(triggers: string | readonly string[]): PubSubAsyncIterableIterator<T> {
+    return this.asyncIterableIterator<T>(triggers);
+  }
 }
