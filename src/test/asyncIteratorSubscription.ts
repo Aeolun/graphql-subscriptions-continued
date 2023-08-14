@@ -162,9 +162,11 @@ describe('GraphQL-JS asyncIterator', () => {
     const schema = buildSchema(origIterator);
 
     const results = await subscribe({schema, document: query}) as AsyncIterator<ExecutionResult>;
-    const end = results.return();
+    const end = results.return?.();
 
-    const r = end.then(res => {
+    expect(end).to.exist;
+
+    const r = end?.then(res => {
       expect(returnSpy).to.have.been.called;
     });
 
@@ -231,14 +233,28 @@ describe('withFilter', () => {
       },
     };
 
+    type Context = {
+      stuff: string;
+    }
+
+    // this checks that it works if you leave context undefined
     const filteredAsyncIterator =
       await withFilter(() => asyncIterator, () => stopped)();
 
-    global.gc();
+    // this checks that it works if you specify the context type, not used in the test otherwise
+    const testAsyncIterator =
+      await withFilter((rootValue, args, context: Context, info) => {
+        context.stuff = 'stuff';
+        return asyncIterator[Symbol.asyncIterator]();
+      }, (rootValue, args, context, info) => {
+        return stopped[Symbol.asyncIterator]();
+      })();
+
+    global.gc?.();
     const heapUsed = process.memoryUsage().heapUsed;
     const nextPromise = filteredAsyncIterator.next();
     await new Promise(resolve => setTimeout(resolve, 3000));
-    global.gc();
+    global.gc?.();
     const heapUsed2 = process.memoryUsage().heapUsed;
     stopped = true;
     await nextPromise;
