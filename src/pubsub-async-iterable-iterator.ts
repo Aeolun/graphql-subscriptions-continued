@@ -35,14 +35,16 @@ import { PubSubEngine } from './pubsub-engine';
 export class PubSubAsyncIterableIterator<T> implements AsyncIterableIterator<T> {
 
   private pullQueue: ((value: IteratorResult<T>) => void)[];
+  private options: unknown;
   private pushQueue: T[];
   private eventsArray: readonly string[];
   private allSubscribed: Promise<number[]>;
   private running: boolean;
   private pubsub: PubSubEngine;
 
-  constructor(pubsub: PubSubEngine, eventNames: string | readonly string[]) {
+  constructor(pubsub: PubSubEngine, eventNames: string | readonly string[], options?: unknown) {
     this.pubsub = pubsub;
+    this.options = options;
     this.pullQueue = [];
     this.pushQueue = [];
     this.running = true;
@@ -109,7 +111,7 @@ export class PubSubAsyncIterableIterator<T> implements AsyncIterableIterator<T> 
 
   private subscribeAll() {
     return Promise.all(this.eventsArray.map(
-      eventName => this.pubsub.subscribe(eventName, this.pushValue.bind(this), {}),
+      eventName => this.pubsub.subscribe(eventName, this.pushValue.bind(this), this.options),
     ));
   }
 
